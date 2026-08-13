@@ -1,0 +1,66 @@
+name: Build macOS App
+
+# Runs automatically on every push to main, and can also be triggered
+# manually from the Actions tab ("Run workflow" button).
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build-mac:
+    runs-on: macos-latest        # a real Apple-hardware runner, hosted by GitHub — free
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install \
+            pyinstaller \
+            pillow \
+            PyPDF2 \
+            pypdf \
+            arabic_reshaper \
+            python-bidi \
+            python-docx \
+            openpyxl \
+            pdfplumber \
+            pytesseract \
+            qrcode \
+            reportlab \
+            tkcalendar
+
+      - name: Find the app's .py file
+        id: findapp
+        run: |
+          APP_PY=$(ls tour_manager_app*.py | head -n 1)
+          echo "Found: $APP_PY"
+          echo "app_py=$APP_PY" >> "$GITHUB_OUTPUT"
+
+      - name: Build TourManager.app
+        run: |
+          pyinstaller --noconfirm --onefile --windowed --name "TourManager" \
+            --hidden-import PIL._tkinter_finder \
+            --collect-all tkcalendar \
+            --collect-all reportlab \
+            --collect-all pdfplumber \
+            "${{ steps.findapp.outputs.app_py }}"
+
+      - name: Zip the .app (artifacts need a single file, not a bundle folder)
+        run: |
+          cd dist
+          zip -r TourManager-mac.zip TourManager.app
+
+      - name: Upload TourManager.app as a downloadable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TourManager-mac
+          path: dist/TourManager-mac.zip
+          retention-days: 30

@@ -1,0 +1,78 @@
+GITHUB ACTIONS AUTO-BUILDER — NO MAC OR WINDOWS MACHINE NEEDED
+================================================================
+
+This folder builds TourManager.app (macOS) AND TourManager.exe (Windows)
+automatically in the cloud on GitHub's own machines — real Apple hardware
+for the Mac build, a real Windows machine for the exe. You never install
+Python, PyInstaller, or anything else yourself. It's free.
+
+WHAT'S IN THIS FOLDER
+----------------------
+  tour_manager_app.py               the app's source code
+  .github/workflows/build-mac.yml       builds the Mac app
+  .github/workflows/build-windows.yml   builds the Windows exe
+
+ONE-TIME SETUP (about 5 minutes)
+----------------------------------
+1. Go to https://github.com and create a free account if you don't
+   have one already.
+
+2. Click the "+" in the top-right corner → "New repository".
+   - Name it anything, e.g. "tour-manager"
+   - Choose "Private" if you don't want the code public (recommended —
+     private repos still get free build minutes).
+   - Click "Create repository".
+
+3. On the new repo's page, click "uploading an existing file"
+   (or "Add file" → "Upload files").
+
+4. Drag this ENTIRE folder's contents into the upload box — make sure
+   the .github folder comes along too (some browsers hide dot-folders;
+   if drag-and-drop skips it, use "git" from a terminal instead — see
+   the alternative method below).
+
+5. Click "Commit changes".
+
+6. That's it — as soon as you commit, GitHub automatically starts
+   building both the Mac app and the Windows exe in the background.
+
+DOWNLOADING THE BUILT APP
+---------------------------
+1. On your repo's page, click the "Actions" tab near the top.
+2. You'll see "Build macOS App" and "Build Windows App" runs in progress
+   (yellow dot) or finished (green check). Click on one.
+3. Scroll down to "Artifacts" at the bottom of that run's page.
+4. Click "TourManager-mac" or "TourManager-windows" to download a zip
+   containing the finished app/exe.
+
+Every time you upload a new/updated tour_manager_app.py file to the
+repo, it rebuilds both automatically — no re-setup needed.
+
+ALTERNATIVE: UPLOADING VIA GIT (if drag-and-drop hides the .github folder)
+----------------------------------------------------------------------------
+If your browser's upload box won't show/include the hidden .github
+folder, use these Terminal/Command Prompt commands instead (after
+creating the empty repo on GitHub as in step 2 above):
+
+    cd /path/to/this/folder
+    git init
+    git add -A
+    git commit -m "Initial upload"
+    git branch -M main
+    git remote add origin https://github.com/YOUR-USERNAME/tour-manager.git
+    git push -u origin main
+
+(Replace YOUR-USERNAME and the repo name with your actual repo URL —
+copy it from the green "Code" button on your repo's GitHub page.)
+
+NOTES
+------
+- Free GitHub accounts get 2,000 build-minutes/month for private repos
+  (unlimited for public repos) — each build here takes roughly 5-10
+  minutes, so that's 200+ builds a month for free.
+- To trigger a rebuild without changing the code, go to the Actions tab
+  → select a workflow → click "Run workflow".
+- The macOS Gatekeeper "right-click → Open" step is still needed the
+  first time you run the downloaded TourManager.app, same as with a
+  locally-built one — that's a macOS security thing, not related to
+  how it was built.
